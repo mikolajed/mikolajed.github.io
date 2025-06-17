@@ -3,3 +3,5 @@ theme: jekyll-theme-minimal
 description: Personal website for Mikołaj Jędrzejewski
 author: Mikołaj Jędrzejewski
 show_downloads: false
+url: "https://mikolajed.github.io"
+baseurl: ""
