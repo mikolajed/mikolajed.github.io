@@ -1,0 +1,27 @@
+# Bundler
+.bundle/
+vendor/
+Gemfile.lock
+
+# Jekyll site
+_site/
+.sass-cache/
+
+# macOS system files
+.DS_Store
+
+# Ruby
+*.gem
+.yardoc
+.yardtmp
+.ruby-version
+
+# Logs and temp files
+*.log
+*.tmp
+
+# VS Code (if you use it)
+.vscode/
+
+# Environment variables or config (if added)
+.env
