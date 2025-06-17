@@ -1,0 +1,184 @@
+---
+layout: none
+permalink: /noise/
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brown Noise Generator</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+
+    label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+    }
+
+    input[type="range"] {
+      width: 200px;
+    }
+
+    button, select {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover, select:hover {
+      background: #0c0;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎧 Brown Noise Generator</h1>
+  <p>Choose a preset or customize it to your needs.</p>
+
+  <div class="controls">
+    <label for="preset">Preset:</label>
+    <select id="preset">
+      <option value="chill">🌿 Chill</option>
+      <option value="focus">💼 Focus</option>
+      <option value="sleep">🌙 Deep Sleep</option>
+      <option value="custom">🎛 Custom</option>
+    </select>
+
+    <label for="volume">Volume</label>
+    <input type="range" id="volume" min="0" max="2" step="0.01" value="1">
+
+    <label for="bass">Bass Filter (Hz)</label>
+    <input type="range" id="bass" min="20" max="2000" step="10" value="300">
+
+    <label for="smoothing">Roughness (Lower = Smoother)</label>
+    <input type="range" id="smoothing" min="0.001" max="0.1" step="0.001" value="0.02">
+
+    <button id="toggle">▶️ Start</button>
+  </div>
+
+  <script>
+    let audioCtx, gainNode, filterNode, noiseNode;
+    let isPlaying = false;
+    let lastOut = 0;
+
+    const volumeSlider = document.getElementById('volume');
+    const bassSlider = document.getElementById('bass');
+    const smoothingSlider = document.getElementById('smoothing');
+    const presetSelector = document.getElementById('preset');
+    const toggleButton = document.getElementById('toggle');
+
+    function createNoise(smoothing) {
+      const bufferSize = 4096;
+      lastOut = 0;
+      const node = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+      node.onaudioprocess = function(e) {
+        const output = e.outputBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (smoothing * white)) / (1 + smoothing);
+          lastOut = output[i];
+        }
+      };
+      return node;
+    }
+
+    function startNoise() {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      gainNode = audioCtx.createGain();
+      filterNode = audioCtx.createBiquadFilter();
+      filterNode.type = 'lowpass';
+      noiseNode = createNoise(parseFloat(smoothingSlider.value));
+
+      noiseNode.connect(filterNode);
+      filterNode.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      updateParams();
+      noiseNode.connect(filterNode);
+      isPlaying = true;
+      toggleButton.textContent = '⏹ Stop';
+    }
+
+    function stopNoise() {
+      if (noiseNode) noiseNode.disconnect();
+      if (gainNode) gainNode.disconnect();
+      if (filterNode) filterNode.disconnect();
+      if (audioCtx) audioCtx.close();
+      isPlaying = false;
+      toggleButton.textContent = '▶️ Start';
+    }
+
+    function updateParams() {
+      if (!gainNode || !filterNode) return;
+      gainNode.gain.value = parseFloat(volumeSlider.value);
+      filterNode.frequency.value = parseFloat(bassSlider.value);
+
+      // recreate noise with new smoothing
+      if (audioCtx && isPlaying) {
+        noiseNode.disconnect();
+        noiseNode = createNoise(parseFloat(smoothingSlider.value));
+        noiseNode.connect(filterNode);
+      }
+    }
+
+    toggleButton.addEventListener('click', () => {
+      if (!isPlaying) {
+        startNoise();
+      } else {
+        stopNoise();
+      }
+    });
+
+    [volumeSlider, bassSlider, smoothingSlider].forEach(input =>
+      input.addEventListener('input', updateParams)
+    );
+
+    presetSelector.addEventListener('change', () => {
+      const preset = presetSelector.value;
+      if (preset === 'chill') {
+        volumeSlider.value = 0.8;
+        bassSlider.value = 400;
+        smoothingSlider.value = 0.015;
+      } else if (preset === 'focus') {
+        volumeSlider.value = 1.2;
+        bassSlider.value = 1000;
+        smoothingSlider.value = 0.02;
+      } else if (preset === 'sleep') {
+        volumeSlider.value = 0.6;
+        bassSlider.value = 200;
+        smoothingSlider.value = 0.01;
+      }
+      updateParams();
+    });
+  </script>
+</body>
+</html>
