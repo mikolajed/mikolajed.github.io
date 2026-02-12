@@ -5,7 +5,7 @@ import { useAccount, useConnect, useDisconnect, useReadContract, useWriteContrac
 import { GUESTBOOK_ABI, GUESTBOOK_ADDRESS, VISITOR_PASS_ABI, VISITOR_PASS_ADDRESS, CHAIN_ID } from "@/lib/guestbook-abi";
 import { GuestbookPanel } from "./guestbook/guestbook-panel";
 import { SignatureList } from "./guestbook/signature-list";
-import { ConnectModal } from "./guestbook/connect-modal";
+
 import { DEBUG } from "@/lib/constants";
 
 const PAGE_SIZE = 50;
@@ -46,7 +46,7 @@ export function GuestbookJourney() {
   const { address, isConnected } = useAccount();
   const currentChainId = useChainId();
   const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
-  const { connect, connectors } = useConnect();
+
   const { disconnect } = useDisconnect();
 
   const { data: hash, writeContract, isPending } = useWriteContract();
@@ -97,7 +97,7 @@ export function GuestbookJourney() {
   };
 
   const [mounted, setMounted] = useState(false);
-  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+
 
   useEffect(() => setMounted(true), []);
 
@@ -128,7 +128,7 @@ export function GuestbookJourney() {
   };
 
   return (
-    <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-0 px-6 lg:px-12">
+    <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-0 px-0 lg:px-12">
       {/* ─── LEFT: Interaction Panel ─── */}
       <GuestbookPanel 
         isConnected={isConnected}
@@ -138,7 +138,7 @@ export function GuestbookJourney() {
         isMintConfirming={isMintConfirming}
         handleMint={handleMint}
         writeContract={writeContract}
-        setIsConnectModalOpen={setIsConnectModalOpen}
+
         isPending={isPending}
         isConfirming={isConfirming}
       />
@@ -146,13 +146,7 @@ export function GuestbookJourney() {
       {/* ─── RIGHT: Signatures Panel ─── */}
       <SignatureList entries={entries as any[] || []} address={address} />
 
-      {/* Connect Modal */}
-      <ConnectModal
-        isOpen={isConnectModalOpen}
-        onClose={() => setIsConnectModalOpen(false)}
-        connectors={connectors}
-        connect={connect}
-      />
+
     </div>
   );
 }
