@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
 
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme()
@@ -12,18 +13,29 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-9 h-9 p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
+      <div className="w-20 h-[38px] rounded-full bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
     )
   }
 
+  const isDark = resolvedTheme === "dark"
+
   return (
-    <button
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-      className="relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-accent hover:text-accent-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
-      aria-label="Toggle theme"
-    >
-      <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-foreground" />
-      <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-foreground" />
-    </button>
+    <div className="relative flex items-center w-20 h-[38px] p-1 rounded-full bg-background/50 backdrop-blur-md border border-border">
+      <button
+        className="flex-1 flex items-center justify-center z-10 outline-none"
+        onClick={() => setTheme("light")}
+        aria-label="Switch to light mode"
+      >
+        <Sun className={cn("h-4 w-4 transition-colors", !isDark ? "text-amber-500" : "text-muted-foreground/50")} />
+      </button>
+
+      <button
+        className="flex-1 flex items-center justify-center z-10 outline-none"
+        onClick={() => setTheme("dark")}
+        aria-label="Switch to dark mode"
+      >
+        <Moon className={cn("h-4 w-4 transition-colors", isDark ? "text-violet-500" : "text-muted-foreground/50")} />
+      </button>
+    </div>
   )
 }

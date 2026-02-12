@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wallet, LogOut, Ticket, Loader2, PenLine, LockOpen, Lock, Send, KeyRound } from "lucide-react";
-import { useAccount, useChainId, useSwitchChain, useConnect, useDisconnect, useReadContract, useSignMessage } from "wagmi";
+import { useAccount, useChainId, useReadContract, useSignMessage, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { foundry, sepolia } from "wagmi/chains";
 import { DEBUG, DEPLOYER_ADDRESS, DECRYPT_SIGN_MESSAGE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ import { CHAIN_ID, GUESTBOOK_ABI, GUESTBOOK_ADDRESS } from "@/lib/guestbook-abi"
 import { encryptForDeployer, deriveKeyFromSignature } from "@/lib/encryption";
 import { encodeBase64 } from "tweetnacl-util";
 import { VisitorPassView } from "./visitor-pass-view";
+import { ConnectModal } from "../connect-modal";
 
 // ABI fragment for the new ownerPublicKey and setPublicKey functions
 const PUBLIC_KEY_ABI = [
@@ -38,7 +39,7 @@ export function GuestbookPanel({
     isMintConfirming,
     handleMint,
     writeContract,
-    setIsConnectModalOpen,
+
     isPending,
     isConfirming
 }: {
@@ -49,17 +50,21 @@ export function GuestbookPanel({
     isMintConfirming: boolean,
     handleMint: () => void,
     writeContract: (args: any) => void,
-    setIsConnectModalOpen: (open: boolean) => void,
+
     isPending: boolean,
     isConfirming: boolean
 }) {
   const currentChainId = useChainId();
-  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
-  const { disconnect } = useDisconnect();
+
   const [message, setMessage] = useState("");
   const [isEncrypt, setIsEncrypt] = useState(false);
   const [isSettingKey, setIsSettingKey] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const { signMessageAsync } = useSignMessage();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
 
   const isCorrectChain = currentChainId === CHAIN_ID;
   const supportedChains = DEBUG ? [foundry, sepolia] : [sepolia];
@@ -107,7 +112,7 @@ export function GuestbookPanel({
   };
 
   return (
-    <div className="relative flex flex-col justify-center px-2 lg:px-8 xl:px-16 lg:after:absolute lg:after:right-0 lg:after:top-6 lg:after:bottom-6 lg:after:w-px lg:after:bg-zinc-200/50 dark:lg:after:bg-zinc-800/50">
+    <div className="h-full relative flex flex-col justify-center px-2 lg:px-8 xl:px-16 pb-8 md:pb-24 lg:after:absolute lg:after:right-0 lg:after:top-6 lg:after:bottom-6 lg:after:w-px lg:after:bg-zinc-200/50 dark:lg:after:bg-zinc-800/50">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -130,58 +135,32 @@ export function GuestbookPanel({
             {!isConnected ? (
               <div className="space-y-6">
                 <p className="text-base text-muted-foreground font-light">
-                  Connect your wallet to begin.
+                  Please connect your wallet to sign the guestbook.
                 </p>
                 <button
-                  onClick={() => setIsConnectModalOpen(true)}
-                  className="inline-flex items-center justify-center gap-3 px-8 py-3 font-medium text-primary-foreground bg-primary rounded-full transition-transform active:scale-95 shadow-lg"
+                  onClick={() => setIsModalOpen(true)}
+                  className="hidden md:inline-flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:opacity-90 transition-opacity"
                 >
                   <Wallet className="w-4 h-4" />
                   Connect Wallet
                 </button>
+                <ConnectModal
+                  isOpen={isModalOpen}
+                  onClose={() => setIsModalOpen(false)}
+                  connectors={connectors}
+                  connect={connect}
+                  isConnected={isConnected}
+                  address={address}
+                  chainId={currentChainId}
+                  switchChain={switchChain}
+                  isSwitchingChain={isSwitchingChain}
+                  disconnect={disconnect}
+                />
               </div>
             ) : (
               <>
-                {/* Connected Account Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
-                  className="bg-card/50 backdrop-blur-xl rounded-xl px-4 py-3 ring-1 ring-border"
-                >
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-1.5 h-1.5 rounded-full ${isCorrectChain ? 'bg-green-500' : 'bg-amber-500'}`} />
-                      <span className="font-mono text-muted-foreground">
-                        {address?.slice(0, 6)}...{address?.slice(-4)}
-                      </span>
-                      <div className="flex gap-1 ml-1">
-                        {supportedChains.map((chain) => (
-                          <button
-                            key={chain.id}
-                            disabled={currentChainId === chain.id || isSwitchingChain}
-                            onClick={() => switchChain({ chainId: chain.id })}
-                            className={cn(
-                              "px-2 py-0.5 rounded-full transition-all text-xs font-medium",
-                              currentChainId === chain.id
-                                ? "bg-primary text-primary-foreground"
-                                : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-                            )}
-                          >
-                            {chain.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => disconnect()}
-                      className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
-                      title="Disconnect"
-                    >
-                      <LogOut className="w-4 h-4" />
-                    </button>
-                  </div>
-                </motion.div>
+
+
 
                 {/* Deployer: Set Public Key (bootstrap) */}
                 {isDeployer && keyConfirmedEmpty && isCorrectChain && (
@@ -274,7 +253,7 @@ export function GuestbookPanel({
                         )}
                       >
                         <LockOpen className="w-3.5 h-3.5" />
-                        Public
+                        <span className="hidden md:inline">Public</span>
                       </button>
                       <button
                         type="button"
@@ -287,7 +266,7 @@ export function GuestbookPanel({
                         )}
                       >
                         <Lock className="w-3.5 h-3.5" />
-                        Encrypted
+                        <span className="hidden md:inline">Encrypted</span>
                       </button>
                     </div>
                     )}
