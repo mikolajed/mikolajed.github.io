@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { SelfDrawingPortrait } from "@/components/self-drawing-portrait";
 import { Github, Linkedin, Mail, Send } from "lucide-react";
+import { AddressModal } from "@/components/address-modal";
 
 const socials = [
   { href: "https://github.com/mikolajed", icon: Github, label: "GitHub" },
@@ -10,6 +12,43 @@ const socials = [
   { href: "mailto:mikolajedjed@gmail.com", icon: Mail, label: "Email" },
   { href: "https://t.me/mikolajed", icon: Send, label: "Telegram" },
 ];
+
+const ADDRESS = "0x05D56624E386FDf92c30C85C69a10CCfc82e0Aa5";
+
+function CopyAddress() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 relative group"
+        title="View Address"
+      >
+        <div className="relative">
+          <svg 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className="h-5 w-5 sm:h-6 sm:w-6 transition-all"
+          >
+            <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+          </svg>
+        </div>
+        <span className="sr-only">View Address</span>
+      </button>
+
+      <AddressModal 
+        isOpen={isOpen} 
+        onClose={() => setIsOpen(false)} 
+        address={ADDRESS} 
+      />
+    </>
+  );
+}
 
 export default function Home() {
   return (
@@ -45,7 +84,7 @@ export default function Home() {
                     </div>
 
                     {/* Socials */}
-                    <div className="flex gap-6 pt-2 sm:pt-4">
+                    <div className="flex gap-6 pt-2 sm:pt-4 items-center">
                         {socials.map((social) => (
                             <a
                                 key={social.label}
@@ -58,6 +97,7 @@ export default function Home() {
                                 <span className="sr-only">{social.label}</span>
                             </a>
                         ))}
+                        <CopyAddress />
                     </div>
 
 
