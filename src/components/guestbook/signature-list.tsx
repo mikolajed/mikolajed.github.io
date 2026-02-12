@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useSignMessage } from "wagmi";
+import { useSign } from "@/hooks/use-sign";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, KeyRound, Loader2 } from "lucide-react";
 import { isEncryptedEntry, decryptMessage, deriveKeyFromSignature } from "@/lib/encryption";
@@ -19,7 +19,7 @@ export function SignatureList({
   const [sigsPerPage, setSigsPerPage] = useState(4);
   const sigContainerRef = useRef<HTMLDivElement>(null);
   const [decryptKey, setDecryptKey] = useState<Uint8Array | null>(null);
-  const { signMessageAsync, isPending: isSigning } = useSignMessage();
+  const { signMessageAsync, isSigning } = useSign();
 
   const isDeployer = address?.toLowerCase() === DEPLOYER_ADDRESS.toLowerCase();
 

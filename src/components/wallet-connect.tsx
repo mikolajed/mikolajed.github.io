@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount, useConnect, useDisconnect, useChainId, useSwitchChain } from "wagmi";
+import { useWallet } from "@/hooks/use-wallet";
 import { Wallet } from "lucide-react";
 import { ConnectModal } from "./connect-modal";
 import { cn } from "@/lib/utils";
 
 export function WalletConnect() {
-  const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-  const { disconnect } = useDisconnect();
-  const chainId = useChainId();
-  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
+  const { address, isConnected } = useWallet();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const displayAddress = address 
@@ -38,14 +34,6 @@ export function WalletConnect() {
       <ConnectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        connectors={connectors}
-        connect={connect}
-        isConnected={isConnected}
-        address={address}
-        chainId={chainId}
-        switchChain={switchChain}
-        isSwitchingChain={isSwitchingChain}
-        disconnect={disconnect}
       />
     </>
   );

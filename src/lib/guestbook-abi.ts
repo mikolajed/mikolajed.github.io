@@ -714,6 +714,12 @@ export const VISITOR_PASS_ABI = [
   }
 ] as const;
 
+import { parseAbi } from "viem";
+
 export const GUESTBOOK_ADDRESS = "0x3da0efdba59d56999bdc759b6da036b46322dfd8";
 export const VISITOR_PASS_ADDRESS = "0x81f96a1a5434068dc7fd90f2687c2cfed7d54e61";
-export const CHAIN_ID = 11155111;
+export const CHAIN_ID = 11155111; // Sepolia
+
+// Using the same Guestbook address for pagination as it likely contains the view functions
+export const PAGINATED_ADDRESS = GUESTBOOK_ADDRESS; 
+export const PAGINATED_ABI = GUESTBOOK_ABI; // The main ABI already has getEntries and getEntriesCount

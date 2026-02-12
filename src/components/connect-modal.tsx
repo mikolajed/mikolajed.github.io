@@ -3,38 +3,32 @@
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Wallet, LogOut, Check, ChevronRight, Ticket, Loader2 } from "lucide-react";
-import { foundry, sepolia } from "wagmi/chains";
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { DEBUG } from "@/lib/constants";
+import { useWallet } from "@/hooks/use-wallet";
 import { cn } from "@/lib/utils";
-import { VISITOR_PASS_ABI, VISITOR_PASS_ADDRESS, CHAIN_ID } from "@/lib/guestbook-abi";
 import { VisitorPassView } from "./guestbook/visitor-pass-view";
-
-const SUPPORTED_CHAINS = DEBUG ? [foundry, sepolia] : [sepolia];
+import { useVisitorPass } from "@/hooks/use-visitor-pass";
 
 export function ConnectModal({
   isOpen,
   onClose,
-  connectors,
-  connect,
-  isConnected,
-  address,
-  chainId,
-  switchChain,
-  isSwitchingChain,
-  disconnect,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  connectors: readonly any[];
-  connect: (args: any) => void;
-  isConnected: boolean;
-  address?: string;
-  chainId?: number;
-  switchChain?: (args: { chainId: number }) => void;
-  isSwitchingChain?: boolean;
-  disconnect?: () => void;
 }) {
+  const { 
+    connectors, 
+    connect, 
+    isConnected, 
+    address, 
+    chainId, 
+    switchChain, 
+    isSwitchingChain, 
+    disconnect,
+    isCorrectChain,
+    targetChainId,
+    supportedChains
+  } = useWallet();
+
   if (typeof document === "undefined") return null;
 
   return createPortal(
@@ -82,7 +76,7 @@ export function ConnectModal({
                 <div className="space-y-3">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider pl-1">Network</p>
                   <div className="space-y-2">
-                    {SUPPORTED_CHAINS.map((chain) => {
+                    {supportedChains.map((chain) => {
                       const isActive = chainId === chain.id;
                       return (
                         <button
@@ -116,7 +110,8 @@ export function ConnectModal({
                   <VisitorPassSection 
                       address={address} 
                       chainId={chainId} 
-                      switchChain={switchChain} 
+                      switchChain={switchChain}
+                      targetChainId={targetChainId}
                   />
 
                   <div className="pt-2">
@@ -159,36 +154,27 @@ export function ConnectModal({
   );
 }
 
-function VisitorPassSection({ address, chainId, switchChain }: { address?: string, chainId?: number, switchChain?: (args: { chainId: number }) => void }) {
-  const { data: mintHash, writeContract: writeMint, isPending: isMinting } = useWriteContract();
-  const { isLoading: isMintConfirming, isSuccess: isMintConfirmed } = useWaitForTransactionReceipt({ hash: mintHash });
-
-  const { data: hasMinted, refetch: refetchHasMinted } = useReadContract({
-    abi: VISITOR_PASS_ABI,
-    address: VISITOR_PASS_ADDRESS,
-    functionName: "hasMinted",
-    args: address ? [address as `0x${string}`] : undefined,
-    query: { enabled: !!address },
-  });
+function VisitorPassSection({ address, chainId, switchChain, targetChainId }: { address?: string, chainId?: number, switchChain?: (args: { chainId: number }) => void, targetChainId?: number }) {
+  const { 
+      hasMinted, 
+      mint, 
+      isLoading, 
+      isValidChain,
+      isMintConfirmed,
+      refetchHasMinted
+  } = useVisitorPass(address as `0x${string}`, targetChainId, chainId);
   
   // Refetch on confirmation
   if (isMintConfirmed) {
       refetchHasMinted();
   }
 
-  const isCorrectChain = chainId === CHAIN_ID;
-  const isLoading = isMinting || isMintConfirming;
-
   const handleMint = () => {
-    if (!isCorrectChain) {
-        switchChain?.({ chainId: CHAIN_ID });
+    if (!isValidChain && targetChainId) {
+        switchChain?.({ chainId: targetChainId });
         return;
     }
-    writeMint({
-      abi: VISITOR_PASS_ABI,
-      address: VISITOR_PASS_ADDRESS,
-      functionName: "mint",
-    });
+    mint();
   };
 
   return (
@@ -218,7 +204,7 @@ function VisitorPassSection({ address, chainId, switchChain }: { address?: strin
             >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Mint Visitor Pass"}
             </button>
-             {!isCorrectChain && (
+             {!isValidChain && (
                  <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
                    Switch network first
                  </p>

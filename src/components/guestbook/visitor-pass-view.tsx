@@ -2,30 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useReadContract } from "wagmi";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import { VISITOR_PASS_ABI, VISITOR_PASS_ADDRESS } from "@/lib/guestbook-abi";
+import { useWallet } from "@/hooks/use-wallet";
+import { useVisitorPass } from "@/hooks/use-visitor-pass";
 
 export function VisitorPassView({ address }: { address?: `0x${string}` }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const { chainId, targetChainId } = useWallet();
 
-  const { data: tokenId } = useReadContract({
-    abi: VISITOR_PASS_ABI,
-    address: VISITOR_PASS_ADDRESS,
-    functionName: "visitorTokenId",
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
-  });
-
-  const { data: tokenURI } = useReadContract({
-    abi: VISITOR_PASS_ABI,
-    address: VISITOR_PASS_ADDRESS,
-    functionName: "tokenURI",
-    args: tokenId !== undefined ? [tokenId] : undefined,
-    query: { enabled: tokenId !== undefined },
-  });
+  const { tokenURI, tokenId } = useVisitorPass(address, targetChainId, chainId);
 
   useEffect(() => {
     if (tokenURI) {

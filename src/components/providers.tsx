@@ -1,30 +1,10 @@
 "use client";
 
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { sepolia, foundry } from "wagmi/chains";
+import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { injected } from "wagmi/connectors";
 import { ThemeProvider } from "./theme-provider";
-import { DEBUG } from "@/lib/constants";
+import { config } from "@/lib/wagmi";
 
-const debugConfig = createConfig({
-  chains: [foundry, sepolia],
-  connectors: [injected()],
-  transports: {
-    [foundry.id]: http(),
-    [sepolia.id]: http(),
-  },
-});
-
-const prodConfig = createConfig({
-  chains: [sepolia],
-  connectors: [injected()],
-  transports: {
-    [sepolia.id]: http(),
-  },
-});
-
-const config = DEBUG ? debugConfig : prodConfig;
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
