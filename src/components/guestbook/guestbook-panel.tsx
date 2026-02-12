@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import { CHAIN_ID, GUESTBOOK_ABI, GUESTBOOK_ADDRESS } from "@/lib/guestbook-abi";
 import { encryptForDeployer, deriveKeyFromSignature } from "@/lib/encryption";
 import { encodeBase64 } from "tweetnacl-util";
-import { VisitorPassView } from "./visitor-pass-view";
 import { ConnectModal } from "../connect-modal";
 
 // ABI fragment for the new ownerPublicKey and setPublicKey functions
@@ -34,10 +33,6 @@ const PUBLIC_KEY_ABI = [
 export function GuestbookPanel({
     isConnected,
     address,
-    hasMinted,
-    isMinting,
-    isMintConfirming,
-    handleMint,
     writeContract,
 
     isPending,
@@ -45,10 +40,6 @@ export function GuestbookPanel({
 }: {
     isConnected: boolean,
     address?: `0x${string}`,
-    hasMinted: boolean,
-    isMinting: boolean,
-    isMintConfirming: boolean,
-    handleMint: () => void,
     writeContract: (args: any) => void,
 
     isPending: boolean,
@@ -189,47 +180,7 @@ export function GuestbookPanel({
                   </motion.div>
                 )}
 
-                {/* Visitor Pass Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                  className="bg-card/50 backdrop-blur-xl rounded-xl p-5 ring-1 ring-border space-y-3"
-                >
-                  <div className="flex items-center gap-2 text-foreground">
-                    <Ticket className="w-5 h-5" />
-                    <h3 className="font-bold text-base uppercase tracking-widest">Visitor Pass</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground font-light">
-                    Mint an on-chain souvenir of your visit.
-                  </p>
 
-                  {hasMinted ? (
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1.5 px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-medium rounded-full ring-1 ring-inset ring-green-500/20">
-                        <Ticket className="w-3 h-3" />
-                        Collected
-                      </span>
-                      <VisitorPassView address={address} />
-                    </div>
-                  ) : (
-                    <>
-                      {!isCorrectChain && (
-                        <p className="text-amber-600 dark:text-amber-400 text-sm font-medium">
-                          Switch to {supportedChains.find(c => c.id === CHAIN_ID)?.name} first.
-                        </p>
-                      )}
-                      <button
-                        type="button"
-                        onClick={handleMint}
-                        disabled={isMinting || isMintConfirming || !isCorrectChain}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
-                      >
-                        {isMinting || isMintConfirming ? <Loader2 className="w-4 h-4 animate-spin" /> : "Mint"}
-                      </button>
-                    </>
-                  )}
-                </motion.div>
 
                 {/* Sign the Ledger Card */}
                 <motion.div

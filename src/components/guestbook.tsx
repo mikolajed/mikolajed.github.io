@@ -52,18 +52,6 @@ export function GuestbookJourney() {
   const { data: hash, writeContract, isPending } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  // Visitor Pass
-  const { data: mintHash, writeContract: writeMint, isPending: isMinting } = useWriteContract();
-  const { isLoading: isMintConfirming, isSuccess: isMintConfirmed } = useWaitForTransactionReceipt({ hash: mintHash });
-
-  const { data: hasMinted, refetch: refetchHasMinted } = useReadContract({
-    abi: VISITOR_PASS_ABI,
-    address: VISITOR_PASS_ADDRESS,
-    functionName: "hasMinted",
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
-  });
-
   // Step 1: Get total count
   const { data: totalCount, refetch: refetchCount } = useReadContract({
     abi: PAGINATED_ABI,
@@ -107,25 +95,11 @@ export function GuestbookJourney() {
     }
   }, [isConfirmed]);
 
-  useEffect(() => {
-    if (isMintConfirmed) {
-      refetchHasMinted();
-    }
-  }, [isMintConfirmed, refetchHasMinted]);
+
 
   if (!mounted) return null;
 
-  const handleMint = () => {
-    if (currentChainId !== CHAIN_ID) {
-      alert(`Please switch to ${DEBUG ? "Foundry (Localhost)" : "Sepolia"}`);
-      return;
-    }
-    writeMint({
-      abi: VISITOR_PASS_ABI,
-      address: VISITOR_PASS_ADDRESS,
-      functionName: "mint",
-    });
-  };
+
 
   return (
     <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-0 px-0 lg:px-12">
@@ -133,10 +107,6 @@ export function GuestbookJourney() {
       <GuestbookPanel 
         isConnected={isConnected}
         address={address}
-        hasMinted={!!hasMinted}
-        isMinting={isMinting}
-        isMintConfirming={isMintConfirming}
-        handleMint={handleMint}
         writeContract={writeContract}
 
         isPending={isPending}
