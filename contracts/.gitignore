@@ -1,0 +1,15 @@
+# Foundry
+cache/
+out/
+broadcast/
+.env
+lib/
+
+# Node
+node_modules/
+
+# Mac
+.DS_Store
+
+# Python
+.venv

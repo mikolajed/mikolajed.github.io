@@ -16,28 +16,28 @@ export function ProjectCard({ title, href, stack, date, children }: ProjectCardP
     <motion.div
       whileHover={{ y: -5 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="group relative flex flex-col justify-between rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+      className="group relative flex flex-col justify-between rounded-2xl bg-card border border-border p-8 hover:border-ring/30 hover:shadow-sm transition-all"
     >
       <div>
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            <a href={href} target="_blank" rel="noopener noreferrer" className="hover:underline focus:outline-none">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-xl font-bold tracking-tight text-foreground font-display">
+            <a href={href} target="_blank" rel="noopener noreferrer" className="focus:outline-none">
               <span className="absolute inset-0" aria-hidden="true" />
               {title}
             </a>
           </h3>
-          <ExternalLink className="h-5 w-5 text-zinc-400 transition-colors group-hover:text-zinc-600 dark:text-zinc-500 dark:group-hover:text-zinc-300" />
+          <ExternalLink className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-foreground" />
         </div>
-        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{date}</p>
-        <div className="mt-4 text-zinc-600 dark:text-zinc-300 space-y-2">
+        <p className="text-xs font-mono text-muted-foreground/80 mb-6">{date}</p>
+        <div className="text-muted-foreground space-y-2 text-sm leading-relaxed">
           {children}
         </div>
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-8 flex flex-wrap gap-2">
         {stack.map((tech) => (
           <span
             key={tech}
-            className="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
+            className="inline-flex items-center rounded-md bg-secondary text-secondary-foreground border border-border px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide"
           >
             {tech}
           </span>

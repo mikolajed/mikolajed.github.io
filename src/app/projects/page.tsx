@@ -62,15 +62,15 @@ const projects = [
 
 export default function ProjectsPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pt-28">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Projects</h1>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-          A selection of my recent work in blockchain, systems programming, and web development.
+        <h1 className="text-4xl font-bold tracking-widest text-foreground font-display uppercase">Projects</h1>
+        <p className="mt-4 text-muted-foreground font-light tracking-wide">
+          A selection of work in blockchain, systems, and web.
         </p>
       </motion.div>
 

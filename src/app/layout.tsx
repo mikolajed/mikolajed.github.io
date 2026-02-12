@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { EB_Garamond, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/nav";
+import { Providers } from "@/components/providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const ebGaramond = EB_Garamond({ subsets: ["latin"], variable: "--font-eb-garamond" });
+const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
 
 export const metadata: Metadata = {
   title: "Mikołaj Jędrzejewski",
@@ -16,12 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-50 antialiased`}>
-        <Nav />
-        <main className="container mx-auto px-4 py-8 md:py-16">
-          {children}
-        </main>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${ebGaramond.variable} ${cinzel.variable} font-serif min-h-screen antialiased bg-background text-foreground`}>
+        <Providers>
+          <Nav />
+          <main className="container mx-auto px-4 md:px-8">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

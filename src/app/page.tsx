@@ -1,54 +1,45 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { ArrowRight, FileText } from "lucide-react";
+import { SelfDrawingPortrait } from "@/components/self-drawing-portrait";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-12 text-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-6 max-w-2xl"
-      >
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl bg-gradient-to-r from-zinc-900 to-zinc-500 bg-clip-text text-transparent dark:from-zinc-100 dark:to-zinc-500">
-          Mikołaj Jędrzejewski
-        </h1>
-        
-        <p className="text-lg text-zinc-600 dark:text-zinc-400 sm:text-xl leading-relaxed">
-          Computer Science student at <strong>Warsaw University of Technology</strong>.
-          <br />
-          Exchange student at <strong>National University of Singapore (NUS)</strong>.
-        </p>
+    <div className="h-screen relative overflow-hidden flex flex-col pt-20 pb-10 md:pt-24 md:pb-12">
+      
+        <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-0 relative z-10">
+             {/* Left: Photo */}
+            <div className="relative h-full w-full order-2 lg:order-1 flex items-center justify-center p-6 md:p-8 lg:p-12 text-foreground">
+                <div className="w-full h-full max-h-[70vh] relative overflow-hidden">
+                    <SelfDrawingPortrait 
+                        className="w-full h-full"
+                    />
+                </div>
+            </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-          <Link
-            href="/projects"
-            className="inline-flex items-center justify-center rounded-full bg-zinc-900 px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2"
-          >
-            View Projects
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-          <Link
-            href="/about"
-            className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-8 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-transparent dark:text-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2"
-          >
-            About Me
-          </Link>
-          <a
-             href="/cv/CV.pdf"
-             target="_blank"
-             rel="noopener noreferrer"
-             className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white px-8 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-transparent dark:text-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2"
-          >
-            <FileText className="mr-2 h-4 w-4" />
-            Resume
-          </a>
+            {/* Right: Identity & Valid Actions */}
+            <div className="relative h-full w-full flex flex-col justify-center px-4 lg:px-8 xl:px-16 order-1 lg:order-2">
+                <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="space-y-12"
+                >
+                    <div className="space-y-8 lg:space-y-10">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-widest text-foreground font-display uppercase leading-none break-words">
+                            Mikołaj <br /> Jędrzejewski
+                        </h1>
+                        
+                        <div className="space-y-4 text-base sm:text-lg font-serif italic text-muted-foreground">
+                            <p>Computer Science <span className="not-italic text-xs sm:text-sm mx-2 uppercase tracking-widest font-sans opacity-50">at</span> Warsaw University of Technology</p>
+                            <p>Formerly <span className="not-italic text-xs sm:text-sm mx-2 uppercase tracking-widest font-sans opacity-50">at</span> National University of Singapore</p>
+                        </div>
+                    </div>
 
+
+                </motion.div>
+            </div>
         </div>
-      </motion.div>
     </div>
   );
 }
