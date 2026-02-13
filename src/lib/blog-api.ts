@@ -33,6 +33,44 @@ export async function createPost(
   return res.json();
 }
 
+export async function updatePost(
+  slug: string,
+  post: Partial<Omit<BlogPost, "created_at" | "updated_at" | "id">>,
+  auth: { signature: string; timestamp: number }
+) {
+  const res = await fetch(`${API_URL}/posts/${slug}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Signature": auth.signature,
+      "X-Timestamp": auth.timestamp.toString(),
+    },
+    body: JSON.stringify(post),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err);
+  }
+  return res.json();
+}
+
+export async function deletePost(slug: string, auth: { signature: string; timestamp: number }) {
+  const res = await fetch(`${API_URL}/posts/${slug}`, {
+    method: "DELETE",
+    headers: {
+      "X-Signature": auth.signature,
+      "X-Timestamp": auth.timestamp.toString(),
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err);
+  }
+  return res.json();
+}
+
 export async function uploadFile(file: File, auth: { signature: string; timestamp: number }) {
   const formData = new FormData();
   formData.append("file", file);

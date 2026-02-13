@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Loader2, Calendar } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import { BlogOwnerControls } from "@/app/blog/[slug]/BlogOwnerControls";
 
 export default function BlogPostClient({ slug }: { slug: string }) {
   const [post, setPost] = useState<BlogPost | null>(null);
@@ -60,6 +61,9 @@ export default function BlogPostClient({ slug }: { slug: string }) {
                             day: 'numeric'
                         })}
                     </time>
+                    <div className="ml-auto">
+                        <BlogOwnerControls slug={slug} />
+                    </div>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight font-display text-foreground leading-tight">
                     {post.title}
