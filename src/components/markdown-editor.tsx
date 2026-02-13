@@ -17,6 +17,7 @@ import {
     PenLine
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Mermaid } from "./mermaid";
 
 interface MarkdownEditorProps {
     value: string;
@@ -81,6 +82,21 @@ export function MarkdownEditor({ value, onChange, onUpload, actions }: MarkdownE
                         rehypePlugins={[rehypeRaw]}
                         urlTransform={(url) => url}
                         components={{
+                            code({node, inline, className, children, ...props}: any) {
+                                const match = /language-(\w+)/.exec(className || '')
+                                if (!inline && match && match[1] === 'mermaid') {
+                                    return <Mermaid chart={String(children).replace(/\n$/, '')} />
+                                }
+                                return !inline && match ? (
+                                <code className={className} {...props}>
+                                    {children}
+                                </code>
+                                ) : (
+                                <code className={className} {...props}>
+                                    {children}
+                                </code>
+                                )
+                            },
                             // Custom renderers if needed
                             img: ({node, ...props}) => props.src ? <img {...props} className="rounded-lg border border-border/50 shadow-sm" /> : null,
                             video: ({node, ...props}) => props.src ? <video {...props} className="rounded-lg border border-border/50 shadow-sm" controls /> : null

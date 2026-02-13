@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2, Calendar } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import { BlogOwnerControls } from "@/app/blog/[slug]/BlogOwnerControls";
+import { Mermaid } from "@/components/mermaid";
 
 export default function BlogPostClient({ slug }: { slug: string }) {
   const [post, setPost] = useState<BlogPost | null>(null);
@@ -82,6 +83,21 @@ export default function BlogPostClient({ slug }: { slug: string }) {
                 rehypePlugins={[rehypeRaw]}
                 urlTransform={(url) => url}
                 components={{
+                    code({node, inline, className, children, ...props}: any) {
+                        const match = /language-(\w+)/.exec(className || '')
+                        if (!inline && match && match[1] === 'mermaid') {
+                            return <Mermaid chart={String(children).replace(/\n$/, '')} />
+                        }
+                        return !inline && match ? (
+                        <code className={className} {...props}>
+                            {children}
+                        </code>
+                        ) : (
+                        <code className={className} {...props}>
+                            {children}
+                        </code>
+                        )
+                    },
                     img: ({node, ...props}) => props.src ? <img {...props} className="rounded-lg border border-border/50 shadow-sm w-full my-8" /> : null,
                     video: ({node, ...props}) => props.src ? (
                         <video {...props} className="rounded-lg border border-border/50 shadow-sm w-full my-8" controls playsInline />
