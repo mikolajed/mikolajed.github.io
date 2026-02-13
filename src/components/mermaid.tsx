@@ -3,44 +3,52 @@
 import { useEffect, useRef, useId, useState } from "react";
 import mermaid from "mermaid";
 import { Loader2 } from "lucide-react";
-
-mermaid.initialize({
-  startOnLoad: false,
-  theme: "dark",
-  securityLevel: "loose",
-  fontFamily: "var(--font-sans)",
-});
+import { useTheme } from "next-themes";
 
 interface MermaidProps {
   chart: string;
 }
 
 export function Mermaid({ chart }: MermaidProps) {
-  const id = useId().replace(/:/g, ""); // Create a valid ID
+  const id = useId().replace(/:/g, ""); 
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const elementRef = useRef<HTMLDivElement>(null);
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!chart) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!chart || !mounted) return;
 
     const renderChart = async () => {
       try {
         setError(null);
-        // Unique ID for each render to avoid conflicts
+        
+        const currentTheme = theme === 'system' ? systemTheme : theme;
+        const mermaidTheme = currentTheme === 'dark' ? 'dark' : 'default';
+
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: mermaidTheme,
+            securityLevel: "loose",
+            fontFamily: "var(--font-sans)",
+        });
+
         const uniqueId = `mermaid-${id}-${Date.now()}`;
         const { svg } = await mermaid.render(uniqueId, chart);
         setSvg(svg);
       } catch (err) {
         console.error("Mermaid render error:", err);
         setError("Failed to render diagram");
-        // Mermaid sometimes leaves a persistent error message in the DOM, so we can't fully clean it up easily
-        // but re-rendering with valid input should work.
       }
     };
 
     renderChart();
-  }, [chart, id]);
+  }, [chart, id, theme, systemTheme, mounted]);
 
   if (error) {
      return (

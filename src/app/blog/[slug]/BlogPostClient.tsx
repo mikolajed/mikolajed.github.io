@@ -78,7 +78,7 @@ export default function BlogPostClient({ slug }: { slug: string }) {
         </header>
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none font-serif leading-relaxed">
+        <div className="prose prose-lg dark:prose-invert max-w-none font-serif leading-relaxed prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
             <ReactMarkdown 
                 rehypePlugins={[rehypeRaw]}
                 urlTransform={(url) => url}
