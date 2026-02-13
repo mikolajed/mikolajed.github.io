@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { WalletConnect } from "./wallet-connect";
+import { useWallet } from "@/hooks/use-wallet";
+import { DEPLOYER_ADDRESS } from "@/lib/constants";
 
 const links = [
   { href: "/", label: "Home" },
@@ -17,11 +19,13 @@ const links = [
   { href: "/cv/CV.pdf", label: "CV" },
 ];
 
-
-
 export function Nav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { address } = useWallet();
+  const isOwner = address?.toLowerCase() === DEPLOYER_ADDRESS.toLowerCase();
+
+  const allLinks = isOwner ? [...links, { href: "/blog", label: "Blog" }] : links;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full bg-transparent pt-6 pb-2 transition-all duration-300 pointer-events-none">
@@ -31,7 +35,7 @@ export function Nav() {
         <div className="hidden md:flex items-center gap-12 bg-background/50 backdrop-blur-md px-8 py-3 rounded-full border border-border shadow-sm">
         {/* Links */}
         <div className="flex items-center gap-8"> {/* Links */}
-          {links.map((link) => (
+          {allLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -87,7 +91,7 @@ export function Nav() {
             className="md:hidden mt-2 mx-4 rounded-2xl border border-border bg-background/95 backdrop-blur-xl overflow-hidden shadow-xl pointer-events-auto"
           >
             <div className="flex flex-col p-6 space-y-6 items-center text-center">
-              {links.map((link) => (
+              {allLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
