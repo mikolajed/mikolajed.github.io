@@ -1,0 +1,15 @@
+name = "blog-api"
+main = "src/index.ts"
+compatibility_date = "2024-02-08"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blog-db"
+database_id = "7f06c8a1-f8ec-457c-9380-da11578525cc"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "blog-assets"
+
+[vars]
+OWNER_ADDRESS = "0x05D56624E386FDf92c30C85C69a10CCfc82e0Aa5"

@@ -11,3 +11,6 @@ export const DEPLOYER_ADDRESS = "0x05d56624e386fdf92c30c85c69a10ccfc82e0aa5";
 export const DECRYPT_SIGN_MESSAGE = "mikolajed.github.io:guestbook:decrypt-v1";
 
 export const ENC_PREFIX = "[ENC:v1]";
+
+// ─── APIs ────────────────────────────────────────────────────────
+export const BLOG_API_URL = "https://blog-api.mikolajed.workers.dev";
