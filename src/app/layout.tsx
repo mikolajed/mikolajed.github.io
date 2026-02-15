@@ -3,6 +3,7 @@ import { EB_Garamond, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/nav";
 import { Providers } from "@/components/providers";
+import Script from "next/script";
 
 const ebGaramond = EB_Garamond({ subsets: ["latin"], variable: "--font-eb-garamond" });
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
@@ -26,6 +27,12 @@ export default function RootLayout({
             {children}
           </main>
         </Providers>
+        {/* Cloudflare Web Analytics */}
+        <Script 
+          src="https://static.cloudflareinsights.com/beacon.min.js" 
+          data-cf-beacon='{"token": "dfade464ab3240068b465767aaf2e694"}'
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
