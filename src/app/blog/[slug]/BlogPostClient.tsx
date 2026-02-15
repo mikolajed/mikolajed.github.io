@@ -6,6 +6,12 @@ import Link from "next/link";
 import { ArrowLeft, Loader2, Calendar } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import remarkMath from "remark-math";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
+import "highlight.js/styles/github-dark.css";
 import { BlogOwnerControls } from "@/app/blog/[slug]/BlogOwnerControls";
 import { Mermaid } from "@/components/mermaid";
 
@@ -79,8 +85,13 @@ export default function BlogPostClient({ slug }: { slug: string }) {
 
         {/* Content */}
         <div className="prose prose-lg dark:prose-invert max-w-none font-serif leading-relaxed prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
+            <style jsx global>{`
+                .katex { color: var(--foreground) !important; }
+                .katex-html { color: var(--foreground) !important; }
+            `}</style>
             <ReactMarkdown 
-                rehypePlugins={[rehypeRaw]}
+                remarkPlugins={[remarkMath, remarkGfm]}
+                rehypePlugins={[rehypeRaw, rehypeKatex, rehypeHighlight]}
                 urlTransform={(url) => url}
                 components={{
                     code({node, inline, className, children, ...props}: any) {
