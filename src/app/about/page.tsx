@@ -109,6 +109,29 @@ export default function AboutPage() {
             </li>
         </ul>
       </motion.section>
+
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="space-y-8"
+      >
+        <h2 className="text-sm font-semibold tracking-widest text-zinc-400 uppercase">Beyond the Code</h2>
+        <div className="grid gap-6 sm:grid-cols-2">
+            <a href="/travel" className="group p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all hover:shadow-md block">
+                <h3 className="font-medium text-foreground mb-2 group-hover:text-primary transition-colors">World & Journeys</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                    A log of my travels, from backpacking Vietnam to exchange in Singapore. Explore the 3D globe.
+                </p>
+            </a>
+            <a href="/art" className="group p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all hover:shadow-md block">
+                <h3 className="font-medium text-foreground mb-2 group-hover:text-primary transition-colors">Art & Hobbies</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                    Calligraphy and Latte Art. The analog pursuits that balance the digital world.
+                </p>
+            </a>
+        </div>
+      </motion.section>
     </div>
   );
 }
