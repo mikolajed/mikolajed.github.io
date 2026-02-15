@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { WalletConnect } from "./wallet-connect";
+import { useWallet } from "@/hooks/use-wallet";
+import { DEPLOYER_ADDRESS } from "@/lib/constants";
 
 
 const links = [
@@ -22,6 +24,14 @@ const links = [
 export function Nav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { address } = useWallet();
+
+  const isDeployer = address?.toLowerCase() === DEPLOYER_ADDRESS.toLowerCase();
+
+  const navLinks = links.filter((link) => {
+    if (link.href === "/guestbook") return isDeployer;
+    return true;
+  });
 
 
   return (
@@ -32,7 +42,7 @@ export function Nav() {
         <div className="hidden md:flex items-center gap-12 bg-background/50 backdrop-blur-md px-8 py-3 rounded-full border border-border shadow-sm">
         {/* Links */}
         <div className="flex items-center gap-8"> {/* Links */}
-          {links.map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -88,7 +98,7 @@ export function Nav() {
             className="md:hidden mt-2 mx-4 rounded-2xl border border-border bg-background/95 backdrop-blur-xl overflow-hidden shadow-xl pointer-events-auto"
           >
             <div className="flex flex-col p-6 space-y-6 items-center text-center">
-              {links.map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}

@@ -41,7 +41,15 @@ export function Preview({ value }: PreviewProps) {
                         </code>
                         )
                     },
-                    // Custom renderers if needed
+                    // Custom renderers
+                    a: ({node, ...props}) => (
+                        <a 
+                            {...props} 
+                            className="text-primary hover:underline underline-offset-4 font-medium transition-colors" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                        />
+                    ),
                     img: ({node, ...props}) => props.src ? <img {...props} className="rounded-lg border border-border/50 shadow-sm" /> : null,
                     video: ({node, ...props}) => props.src ? <video {...props} className="rounded-lg border border-border/50 shadow-sm" controls /> : null
                 }}

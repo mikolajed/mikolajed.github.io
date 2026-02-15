@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Wallet, LogOut, Check, ChevronRight, Ticket, Loader2 } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
@@ -165,9 +166,11 @@ function VisitorPassSection({ address, chainId, switchChain, targetChainId }: { 
   } = useVisitorPass(address as `0x${string}`, targetChainId, chainId);
   
   // Refetch on confirmation
-  if (isMintConfirmed) {
+  useEffect(() => {
+    if (isMintConfirmed) {
       refetchHasMinted();
-  }
+    }
+  }, [isMintConfirmed, refetchHasMinted]);
 
   const handleMint = () => {
     if (!isValidChain && targetChainId) {
