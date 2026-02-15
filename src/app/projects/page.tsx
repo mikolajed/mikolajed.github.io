@@ -6,7 +6,8 @@ import { ProjectCard } from "@/components/project-card";
 const projects = [
   {
     title: "Decentralized Voting System (zkVote)",
-    href: "https://zk-vote-six.vercel.app/",
+    deploymentHref: "https://zk-vote-six.vercel.app/",
+    blogHref: "https://mikolajed.github.io/blog/zkvote-bachelor-thesis",
     stack: ["Solidity", "Circom", "TypeScript", "Next.js", "Foundry"],
     date: "May 2025 – Feb 2026",
     description: (
@@ -20,7 +21,7 @@ const projects = [
   },
   {
     title: "Concurrent Programming Portfolio",
-    href: "https://github.com/mikolajed", 
+    blogHref: "https://mikolajed.github.io/blog/concurrent-programming-networking-portfolio",
     stack: ["C", "C++", "Go", "Rust"],
     date: "Jan 2025 – May 2025",
     description: (
@@ -34,7 +35,7 @@ const projects = [
   },
   {
     title: "Web Frontend for SQLancer",
-    href: "https://github.com/mikolajed",
+    blogHref: "https://mikolajed.github.io/blog/sqlancer-web-interface",
     stack: ["Spring Boot", "Next.js", "PostgreSQL"],
     date: "Jan 2025 – May 2025",
     description: (
@@ -47,7 +48,8 @@ const projects = [
   },
   {
     title: "Carbon Credit DEX",
-    href: "https://github.com/mikolajed",
+    href: "https://github.com/IS4302-group12/carbon-credit-decentralized-exchange",
+    blogHref: "https://mikolajed.github.io/blog/building-a-decentralized-carbon-credit-exchange",
     stack: ["Solidity", "Hardhat", "TypeScript"],
     date: "Jan 2025 – May 2025",
     description: (
@@ -58,11 +60,25 @@ const projects = [
       </ul>
     ),
   },
+  {
+    title: "Portfolio & Blog",
+    href: "https://github.com/mikolajed/mikolajed.github.io",
+    blogHref: "https://mikolajed.github.io/blog/building-this-website",
+    stack: ["Next.js", "Cloudflare Workers", "SIWE", "Framer Motion"],
+    date: "Jan 2025 – Present",
+    description: (
+      <ul className="list-disc list-inside space-y-1 text-sm">
+        <li>Personal site with a custom CMS on <strong>Cloudflare Workers</strong> and <strong>D1</strong>.</li>
+        <li>Implemented <strong>Sign-In with Ethereum (SIWE)</strong> for cryptographically secure admin authentication.</li>
+        <li>Designed with <strong>Next.js 14</strong> and <strong>Framer Motion</strong> for a polished user experience.</li>
+      </ul>
+    ),
+  },
 ];
 
 export default function ProjectsPage() {
   return (
-    <div className="space-y-8 pt-28">
+    <div className="space-y-8 pt-28 pb-24 max-w-3xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,7 +90,7 @@ export default function ProjectsPage() {
         </p>
       </motion.div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         {projects.map((project, index) => (
           <motion.div
             key={project.title}
